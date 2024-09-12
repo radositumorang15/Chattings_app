@@ -1,0 +1,3 @@
+const messagesContainer = document.getElementById('messages');
+messagesContainer.insertAdjacentHTML('beforeend', "<%= j render partial: 'messages/message', locals: { message: @message } %>");
+messagesContainer.scrollTop = messagesContainer.scrollHeight;  // Scroll to bottom

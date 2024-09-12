@@ -1,0 +1,54 @@
+<!-- Messages Section -->
+<section class="gradient-custom">
+  <div class="col-md-6 col-lg-7 col-xl-7 p-4">
+    
+    <!-- Back Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <%= link_to 'Back', root_path, class: 'btn btn-light btn-lg' %>
+      <h2 class="text-white">Chat Room: <%= @chat_room.name %></h2>
+    </div>
+
+    <!-- Success Flash Message -->
+    <% if flash[:notice] %>
+      <div class="d-flex align-items-center justify-content-center alert alert-success alert-dismissible fade show" role="alert">
+        <%= flash[:notice] %>
+        <%= link_to 'Back to Chat Room', chat_room_path(@chat_room), class: 'btn btn-sm btn-success ms-3' %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% end %>
+
+    <!-- Messages List -->
+    <ul class="list-unstyled text-white">
+      <ul id="messages" class="list-unstyled">
+        <% @messages.each do |message| %>
+          <%= render partial: 'messages/message', locals: { message: message } %>
+        <% end %>
+      </ul>
+    </ul>
+
+    <!-- Message Form -->
+    <%= form_with(model: [@chat_room, Message.new], url: chat_room_messages_path(@chat_room), remote: true, id: 'message-form') do |form| %>
+      <div class="form-floating mb-3 p-2 mx-3">
+        <%= form.text_area :content, rows: 3, class: 'form-control', id: 'floatingMessage', placeholder: 'Type your message...' %>
+        <label for="floatingMessage">Type your message...</label>
+      </div>
+    
+      <div class="form-floating mb-3 p-2 mx-3">
+        <%= form.text_field :username, value: session[:username], class: 'form-control', id: 'floatingUsername', placeholder: 'Your username' %>
+        <label for="floatingUsername">Your username</label>
+      </div>
+    
+      <div class="text-end">
+        <%= form.submit 'Send', class: 'btn btn-info btn-light btn-lg btn-rounded mx-4 ms-4' %>
+      </div>
+    <% end %>
+
+  </div>
+</section>
+
+<!-- JavaScript for ActionCable Subscription -->
+<script>
+  const chatRoomId = <%= @chat_room.id %>;
+  import { subscribeToChatRoom } from "channels/chat_room_channel";
+  subscribeToChatRoom(chatRoomId);
+</script>
